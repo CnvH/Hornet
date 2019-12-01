@@ -1,6 +1,7 @@
 """class Ring(): Simple Fifo class implemented on a ring queue
     Ring.max_length {int} maximum length of queue before head overwrites tail (max_length == 0 indicates length of 1)
-    Ring.length {int} Current length of queue
+    Ring.length {int} Current length of queue list
+    Ring.size {int} Current number of items in list
     Ring.head_ptr {int} pointer to current head of queue, head_ptr == -1 indicates
     Ring.tail_ptr {int} pointer to current tail of queue
     Ring.add_head {item} adds item to queue.
@@ -26,7 +27,7 @@ class Ring:
         print('Current length: ', self.length)
         if self.head_ptr == -1:
             print('head_ptr == -1, nothing to see here yet...')
-        for i in range(0, self.length):
+        for i in range(0, len(self.queue)):
             print('(', i, ')  ', self.queue[i], '  ', end='')
             if i == self.head_ptr:
                 print('<Head>', end='')
@@ -47,21 +48,50 @@ class Ring:
                 return
         else:
             self.queue[self.head_ptr] = item
-
         self.tail_ptr += 1
         self.tail_ptr %= self.max_length
 
     def pop_head(self):
-        pass
+        if self.head_ptr == -1:
+            return False, False
+        else:
+            item = self.queue[self.head_ptr]
+            if self.head_ptr == self.tail_ptr:
+                self.head_ptr = -1  # queue now empty, reset queue
+                self.tail_ptr = 0
+            else:
+                if self.head_ptr == 0:
+                    self.head_ptr = self.length - 1
+                else:
+                    self.head_ptr -= 1
+        return True, item
 
     def pop_tail(self):
-        pass
+        if self.head_ptr == -1:
+            return False, False
+        else:
+            item = self.queue[self.tail_ptr]
+            if self.head_ptr == self.tail_ptr:
+                self.head_ptr = -1  # queue now empty, reset queue
+                self.tail_ptr = 0
+            else:
+                if self.tail_ptr == self.length:
+                    self.tail_ptr = 0
+                else:
+                    self.tail_ptr += 1
+        return True, item
 
     def inspect_tail(self):
-        pass
+        if self.head_ptr == -1:
+            return False, False
+        else:
+            return True, self.queue(self.tail_ptr)
 
     def inspect_head(self):
-        pass
+        if self.head_ptr == -1:
+            return False, False
+        else:
+            return True, self.queue(self.head_ptr)
 
 
 if __name__ == '__main__':
@@ -69,6 +99,21 @@ if __name__ == '__main__':
 
 x = Ring(4)
 x.status()
-for j in range(1, 6):
+for j in range(1, 9):
+    x.add_head(j)
+    x.status()
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
+
+print('Popped from tail : ', x.pop_tail()[1])
+x.status()
+
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
+
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
+
+for j in range(1, 10):
     x.add_head(j)
     x.status()
