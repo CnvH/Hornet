@@ -18,7 +18,7 @@ class Ring:
         self.max_length = max_length
         self.length = 0
         self.head_ptr = -1
-        self.tail_ptr = 0
+        self.tail_ptr = -1
         self.queue = list()
 
     def status(self):
@@ -36,23 +36,25 @@ class Ring:
             print()
         print('============================================')
 
-    def add_head(self, item):
-        self.head_ptr += 1
+    def add_head(self, item):  # this routine is not right!
         if self.head_ptr >= self.length:
             if self.length == self.max_length:
                 self.head_ptr = 0
                 self.queue[0] = item
             else:
                 self.queue.append(item)
+                self.head_ptr += 1
                 self.length += 1
                 return
         else:
+            self.head_ptr += 1
             self.queue[self.head_ptr] = item
-        self.tail_ptr += 1
-        self.tail_ptr %= self.max_length
+        if self.head_ptr == self.tail_ptr:
+            self.tail_ptr += 1
+            self.tail_ptr %= self.max_length
 
     def pop_head(self):
-        if self.head_ptr == -1:
+        if self.head_ptr == -1:  # this means queue is empty
             return False, False
         else:
             item = self.queue[self.head_ptr]
@@ -67,7 +69,7 @@ class Ring:
         return True, item
 
     def pop_tail(self):
-        if self.head_ptr == -1:
+        if self.head_ptr == -1:  # this means queue is empty
             return False, False
         else:
             item = self.queue[self.tail_ptr]
@@ -85,19 +87,19 @@ class Ring:
         if self.head_ptr == -1:
             return False, False
         else:
-            return True, self.queue(self.tail_ptr)
+            return True, self.queue[self.tail_ptr]
 
     def inspect_head(self):
         if self.head_ptr == -1:
             return False, False
         else:
-            return True, self.queue(self.head_ptr)
+            return True, self.queue[self.head_ptr]
 
 
 if __name__ == '__main__':
     print('main executing...')
 
-x = Ring(4)
+x = Ring(5)
 x.status()
 for j in range(1, 9):
     x.add_head(j)
