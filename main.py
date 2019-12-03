@@ -18,7 +18,7 @@ class Ring:
         self.max_length = max_length
         self.length = 0
         self.head_ptr = -1
-        self.tail_ptr = -1
+        self.tail_ptr = 0
         self.queue = list()
 
     def status(self):
@@ -37,21 +37,21 @@ class Ring:
         print('============================================')
 
     def add_head(self, item):  # this routine is not right!
-        if self.head_ptr >= self.length:
-            if self.length == self.max_length:
-                self.head_ptr = 0
-                self.queue[0] = item
-            else:
-                self.queue.append(item)
-                self.head_ptr += 1
-                self.length += 1
-                return
+        if self.length < self.max_length and self.head_ptr == self.length - 1:  # still appending...
+            self.queue.append(item)
+            self.head_ptr += 1
+            self.length += 1
+        elif self.head_ptr == -1:  # queue exists but has been emptied
+            self.head_ptr = 0
+            self.tail_ptr = 0
+            self.queue[0] = item
         else:
             self.head_ptr += 1
+            self.head_ptr %= self.max_length
             self.queue[self.head_ptr] = item
-        if self.head_ptr == self.tail_ptr:
-            self.tail_ptr += 1
-            self.tail_ptr %= self.max_length
+            if self.head_ptr == self.tail_ptr:
+                self.tail_ptr += 1
+                self.tail_ptr %= self.max_length
 
     def pop_head(self):
         if self.head_ptr == -1:  # this means queue is empty
@@ -99,9 +99,9 @@ class Ring:
 if __name__ == '__main__':
     print('main executing...')
 
-x = Ring(5)
+x = Ring(4)
 x.status()
-for j in range(1, 9):
+for j in range(1, 3):
     x.add_head(j)
     x.status()
 print('Popped from Head : ', x.pop_head()[1])
@@ -116,6 +116,17 @@ x.status()
 print('Popped from Head : ', x.pop_head()[1])
 x.status()
 
-for j in range(1, 10):
+for j in range(1, 4):
     x.add_head(j)
     x.status()
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
+
+print('Popped from tail : ', x.pop_tail()[1])
+x.status()
+
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
+
+print('Popped from Head : ', x.pop_head()[1])
+x.status()
