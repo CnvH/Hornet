@@ -12,7 +12,6 @@
     Ring.status prints out all the queue information
     """
 
-
 class Ring:
     def __init__(self, max_length=8):
         self.max_length = max_length
@@ -95,38 +94,21 @@ class Ring:
         else:
             return True, self.queue[self.head_ptr]
 
+""" class TF03()
+TF03() implements a read and write interface for a TF03 rangefinding Lidar
+The class initiatises with two Ring objects, one as a ring buffer for range data and the other as a ring
+buffer for messages from the TF03.  The TF03 intersperses responses to commands with the range data it returns
+which it also seems to buffer internally.  The assumption is that there are only two ways to get fairly reliable
+timestamps for range data.  One is to put the TF03 in single shot trigger mode and the other is to keep up with 
+the constant stream of range datagrams that the device produces. The TF03 can be configured to report ranges to
+objects that it senses in between a minimum and maximum range which will be important for acquiring weak lidar
+returns that would be ignored if swamped out by strong signals that would otherwise be in range.
 
-if __name__ == '__main__':
-    print('main executing...')
-
-x = Ring(4)
-x.status()
-for j in range(1, 3):
-    x.add_head(j)
-    x.status()
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
-
-print('Popped from tail : ', x.pop_tail()[1])
-x.status()
-
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
-
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
-
-for j in range(1, 4):
-    x.add_head(j)
-    x.status()
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
-
-print('Popped from tail : ', x.pop_tail()[1])
-x.status()
-
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
-
-print('Popped from Head : ', x.pop_head()[1])
-x.status()
+TF03.__init__(self, UART_channel=2, baudrate=115200, etc)
+sets up the TF03 and the cmd and range message queues
+TF03.read1() {success {boolean}, range {boolean}, datagram {bytearray}} Returns True on success, True if the 
+                datagram is for range (False for response to command) and a bytearray that contains the range
+                or command response Datagram.  This function returns a singe datagram.
+TF03.read()  Reads all the data available (until the TF03 buffer is empty and/or until the cmd ring buffer is full?)
+TF03.write() Writes a command to the TF03 
+"""
