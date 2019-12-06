@@ -1,3 +1,6 @@
+from machine import UART
+
+
 """class Ring(): Simple Fifo class implemented on a ring queue
     Ring.max_length {int} maximum length of queue before head overwrites tail (max_length == 0 indicates length of 1)
     Ring.length {int} Current length of queue list
@@ -100,15 +103,33 @@ The class initiatises with two Ring objects, one as a ring buffer for range data
 buffer for messages from the TF03.  The TF03 intersperses responses to commands with the range data it returns
 which it also seems to buffer internally.  The assumption is that there are only two ways to get fairly reliable
 timestamps for range data.  One is to put the TF03 in single shot trigger mode and the other is to keep up with 
-the constant stream of range datagrams that the device produces. The TF03 can be configured to report ranges to
-objects that it senses in between a minimum and maximum range which will be important for acquiring weak lidar
-returns that would be ignored if swamped out by strong signals that would otherwise be in range.
+the constant stream of range datagrams that the device produces. Using a ring buffer and to exhaust the UART buffer 
+and accumulate range measurement means that popping the range measurement at the head of the buffer (ie as a LIFO)
+gives the most up to date measurement.  Responses to commands should be handled on a FIFO basis as the commands 
+report the evolution of internal state in the TF03.
 
-TF03.__init__(self, UART_channel=2, baudrate=115200, etc)
-sets up the TF03 and the cmd and range message queues
+The TF03 can be configured to report ranges to objects that it senses in between a minimum and maximum range 
+which will be important for acquiring weak lidar returns that would be ignored if swamped out by strong signals 
+that would otherwise be in range.
+
+TF03.__init__(self, CMD_buffer_size = 6, range_buffer_size = 20, UART_channel=2, baudrate=115200, data_bits = 8,
+ stop_bit = 1, checksum = False)
+                sets up the TF03 and the cmd and range message queues
 TF03.read1() {success {boolean}, range {boolean}, datagram {bytearray}} Returns True on success, True if the 
                 datagram is for range (False for response to command) and a bytearray that contains the range
                 or command response Datagram.  This function returns a singe datagram.
 TF03.read()  Reads all the data available (until the TF03 buffer is empty and/or until the cmd ring buffer is full?)
 TF03.write() Writes a command to the TF03 
 """
+
+class TF03:
+    def __init__(self, CMD_buffer_size = 6, range_buffer_size = 20, UART_channel=2, UART_baudrate=115200,
+                 UART_data_bits = 8, UART_stop_bit = 1, UART_parity = None):
+        self.uart = UART(UART_Channel)
+        self.uart.init(bits = UART_data_bits, parity = UART_parity, stop = UART_stop_bit)
+        self.CMD_fifo = Ring(CMD_buffer_size)
+        self.range_lifo = Ring(range_buffer_size)
+        self.
+
+
+
