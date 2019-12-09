@@ -1,12 +1,12 @@
 import machine
 import pyb
-import vespa
+import vespa as v
 
 
 if __name__ == '__main__':
     print('main executing...')
 
-x = Ring(4)
+x = v.Ring(4)
 x.status()
 for j in range(1, 3):
     x.add_head(j)
