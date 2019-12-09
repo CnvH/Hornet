@@ -126,7 +126,7 @@ class TF03:
     def __init__(self, CMD_buffer_size = 6, range_buffer_size = 20, UART_channel=2, UART_baudrate=115200,
                  UART_data_bits = 8, UART_stop_bit = 1, UART_parity = None):
         self.uart = UART(UART_channel)
-        self.uart.init(baud = UART_baudrate, bits = UART_data_bits, parity = UART_parity, stop = UART_stop_bit)
+        self.uart.init(baudrate = UART_baudrate, bits = UART_data_bits, parity = UART_parity, stop = UART_stop_bit)
         self.CMD_buf = Ring(CMD_buffer_size)
         self.range_buf = Ring(range_buffer_size)
 
