@@ -1,4 +1,6 @@
-from vespa import Ring
+import machine
+import pyb
+import vespa
 
 
 if __name__ == '__main__':
